@@ -26,7 +26,7 @@ class RPIInformer:
         self.__resource_informer = ResourcesInformer()
         self.__wifi_informer = WiFiInformer()
         self.TempInfo = None
-        self.CpuInfo = None
+        self.CPUInfo = None
         self.MemInfo = None
         self.DiskInfo = None
 
@@ -47,7 +47,7 @@ class RPIInformer:
             self.DiskInfo), self.Datetime.isoformat(), vars(self.WiFiInfo))
 
         for rule in self.__rules:
-            rule.Check()
+            rule.Check(self)
 
     def AddRule(self, premise: Callable[["RPIInformer"], bool], conclusion: Callable[["RPIInformer"], None]):
         self.__rules.append(self.Rule(premise, conclusion))

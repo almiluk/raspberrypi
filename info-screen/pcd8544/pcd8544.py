@@ -12,8 +12,8 @@ class PCB8544(PCD8544):
         dc = digitalio.DigitalInOut(dc_pin)                 # data/command
         cs = digitalio.DigitalInOut(cs_pin)                 # Chip select
         reset = digitalio.DigitalInOut(reset_pin)           # reset
-        self.__backlight = digitalio.DigitalInOut(backlight_pin)   # backlight
-        self.__backlight.switch_to_output()
+        #self.__backlight = digitalio.DigitalInOut(backlight_pin)   # backlight
+        #self.__backlight.switch_to_output()
 
         super().__init__(spi, dc, cs, reset, contrast=contrast, bias=bias)
 
