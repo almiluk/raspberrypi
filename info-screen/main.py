@@ -1,8 +1,6 @@
 from rpi_informer import RPIInformer
 from pcd8544 import PCB8544
 
-from PIL import Image, ImageDraw, ImageFont
-
 import board
 import signal
 from time import sleep
@@ -17,6 +15,8 @@ def main():
         board.D5,
         board.D13,
         50,
+        font="fonts/cg-pixel-4x5-mono.ttf",
+        font_size=5,
     )
 
     def print_rpi_info(informer: RPIInformer):
@@ -37,23 +37,7 @@ def main():
             disk_total=int(informer.DiskInfo.total / 1024 / 1024 / 1024),
         )
 
-        # TODO: Move it to PCB8544 class
-        display.fill(0)
-        image = Image.new("1", (display.width, display.height))
-        draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype("cg-pixel-4x5-mono.ttf", 5)
-        draw.multiline_text(
-            (0, 0),
-            msg,
-            font=font,
-            fill=255,
-            spacing=2,
-        )
-
-        display.image(image)
-
-        # display.text(msg, 0, 0, 1)
-        display.show()
+        display.ShowMultilineText(msg)
 
     informer.AddRule(
         lambda x: True,
