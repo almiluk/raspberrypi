@@ -3,19 +3,19 @@ import psutil
 
 class ResourcesInformer:
     class CPUInfo:
-        def __init__(self, percent, load_avr):
+        def __init__(self, percent: float, load_avr: tuple[float]):
             self.percent = percent
             self.load_avr = load_avr
 
     class MemInfo:
-        def __init__(self, available, used, total, percent):
+        def __init__(self, available: int, used: int, total: int, percent: float):
             self.available = available
             self.used = used
             self.total = total
             self.percent = percent
 
     class DiskInfo:
-        def __init__(self, available, used, total, percent):
+        def __init__(self, available: int, used: int, total: int, percent: float):
             self.available = available
             self.used = used
             self.total = total
@@ -42,7 +42,6 @@ class ResourcesInformer:
         disk = psutil.disk_usage('/')
 
         return self.DiskInfo(disk.free, disk.used, disk.total, disk.percent)
-
 
     def MemoryAvailable(self) -> int:
         return psutil.virtual_memory().available
