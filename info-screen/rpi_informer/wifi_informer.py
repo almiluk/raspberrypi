@@ -16,7 +16,11 @@ class WiFiInformer:
 
         bit_rate = float(match("^.*Bit Rate=([0-9.]*) Mb/s.*", lines[2]).group(1))
 
-        quality_strs = match("^.*Link Quality=(\d*)/(\d*)", lines[5]).groups()
+        quality_match = match("^.*Link Quality=(\d*)/(\d*)", lines[5])
+        if quality_match is None:
+            quality_match = match("^.*Link Quality=(\d*)/(\d*)", lines[6])
+
+        quality_strs = quality_match.groups()
         quality = int(quality_strs[0]) / int(quality_strs[1])
 
         return self.WiFiInfo(ssid, bit_rate, quality)
