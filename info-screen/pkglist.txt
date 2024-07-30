@@ -1,0 +1,5 @@
+python3-psutil
+python3-rpi.gpio
+libgpiod-dev
+python3-libgpiod
+python3-pil
