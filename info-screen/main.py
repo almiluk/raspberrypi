@@ -17,14 +17,17 @@ def main():
         50,
         font="fonts/cg-pixel-4x5-mono.ttf",
         font_size=5,
+        reverse_backlight=True,
     )
+
+    display.SetBacklight(True)
 
     def print_rpi_info(informer: RPIInformer):
         template = (""
                     + "({bitrate}){ssid}\n"
                     + "CP: {cpu:>3} T: {temp:>3}\n"
-                    + "MEM:  {mem_used:>4}/{mem_total:>4} MB\n"
-                    + "DISK: {disk_used:>3}/{disk_total:>3} GB\n"
+                    + "MEM: {mem_used:>4}/{mem_total:>4} MB\n"
+                    + "DISK:{disk_used:>4}/{disk_total:>4} GB\n"
                     )
         msg = template.format(
             bitrate=int(informer.WiFiInfo.bit_rate),
@@ -47,6 +50,7 @@ def main():
     def interrupt_handler(signum, frame):
         display.fill(0)
         display.show()
+        display.SetBacklight(False)
         exit(0)
 
     signal.signal(signal.SIGINT, interrupt_handler)

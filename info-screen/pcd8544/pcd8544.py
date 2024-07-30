@@ -8,14 +8,15 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 class PCB8544(PCD8544):
-    def __init__(self, dc_pin: Pin, cs_pin: Pin, reset_pin: Pin, backlight_pin: Pin, contrast: int = 80, bias: int = 4, font: str = "DejaVuSansMono.ttf", font_size: int = 8):
+    def __init__(self, dc_pin: Pin, cs_pin: Pin, reset_pin: Pin, backlight_pin: Pin, contrast: int = 80, bias: int = 4, font: str = "DejaVuSansMono.ttf", font_size: int = 8, reverse_backlight: bool = False):
         # Initialize SPI bus and control pins
         spi = busio.SPI(board.SCK, MOSI=board.MOSI)
         dc = digitalio.DigitalInOut(dc_pin)                 # data/command
         cs = digitalio.DigitalInOut(cs_pin)                 # Chip select
         reset = digitalio.DigitalInOut(reset_pin)           # reset
-        # self.__backlight = digitalio.DigitalInOut(backlight_pin)   # backlight
-        # self.__backlight.switch_to_output()
+        self.__backlight = digitalio.DigitalInOut(backlight_pin)   # backlight
+        self.__backlight.switch_to_output()
+        self.__reverse_backlight = reverse_backlight
 
         super().__init__(spi, dc, cs, reset, contrast=contrast, bias=bias)
 
@@ -26,7 +27,7 @@ class PCB8544(PCD8544):
         self.show()
 
     def SetBacklight(self, on: bool) -> None:
-        self.__backlight.value = on
+        self.__backlight.value = not on if self.__reverse_backlight else on
 
     def SetTrueTypeFont(self, font: str, size: int) -> None:
         self.__font = ImageFont.truetype(font, size)
