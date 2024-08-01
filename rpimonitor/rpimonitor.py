@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+
+
 from rpi_informer import RPIInformer
 from pcd8544 import PCB8544
 

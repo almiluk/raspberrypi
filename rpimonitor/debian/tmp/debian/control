@@ -1,0 +1,11 @@
+Source: rpimonitor
+Section: python
+Priority: extra
+Maintainer: almiluk <almiluk@gmail.com>
+
+Package: rpimonitor
+Version: 0.1.0
+Standards-Version: 0.1.0
+Depends: python3-pil, python3-psutil, python3:any, python3-rpi.gpio, libgpiod-dev, python3-libgpiod
+Architecture: arm64
+Description: The program, reading RaspberryPi sensors and perform some actions based on that, e.g. shows it on pcd8544 display.

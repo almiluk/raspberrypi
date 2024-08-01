@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+# Added by dh_python3
+if command -v py3compile >/dev/null 2>&1; then
+	py3compile -p python3-rpimonitor
+fi
+if command -v pypy3compile >/dev/null 2>&1; then
+	pypy3compile -p python3-rpimonitor  || true
+fi
+
+# End added section
+
+sudo pip3 install adafruit-circuitpython-pcd8544 --break-system-packages
+
