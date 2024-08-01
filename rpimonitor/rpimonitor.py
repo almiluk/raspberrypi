@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 
+from dynaconf import Dynaconf, LazySettings
+
 from rpi_informer import RPIInformer
 from pcd8544 import PCB8544
 
@@ -11,16 +13,20 @@ from sys import exit
 
 
 def main():
+    conf = get_config()
+    pins = conf["pins"]
+
     informer = RPIInformer()
     display = PCB8544(
-        board.D6,
-        board.CE0,
-        board.D5,
-        board.D13,
-        50,
-        font="fonts/cg-pixel-4x5-mono.ttf",
-        font_size=5,
-        reverse_backlight=True,
+        pins["dc"],
+        pins["cs"],
+        pins["reset"],
+        pins["backlight"],
+        conf["screen"]["contrast"],
+        conf["screen"]["bias"],
+        conf["screen"]["font"],
+        conf["screen"]["font_size"],
+        conf["screen"]["reverse_backlight"],
     )
 
     display.SetBacklight(True)
@@ -28,7 +34,7 @@ def main():
     def print_rpi_info(informer: RPIInformer):
         template = (""
                     + "({bitrate}){ssid}\n"
-                    + "CP: {cpu:>3} T: {temp:>3}\n"
+                    + "CP: {cpu:>3} T: {temp:>3}°C\n"
                     + "MEM: {mem_used:>4}/{mem_total:>4} MB\n"
                     + "DISK:{disk_used:>4}/{disk_total:>4} GB\n"
                     )
@@ -61,6 +67,19 @@ def main():
     while True:
         informer.Tick()
         sleep(1)
+
+
+def get_config() -> LazySettings:
+    config = Dynaconf(settings_files=["/etc/rpimonitor.conf"])
+
+    for pin_name, pin_value in config["pins"].items():
+        try:
+            config["pins"][pin_name] = eval("board." + pin_value)
+        except AttributeError as ex:
+            print(f"Incorrect pin name: {pin_value}")
+            exit(1)
+
+    return config
 
 
 if __name__ == "__main__":

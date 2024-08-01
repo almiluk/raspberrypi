@@ -1,5 +1,0 @@
-psutil
-adafruit-circuitpython-pcd8544
-RPi-GPIO
-gpiod
-Pillow
