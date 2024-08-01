@@ -6,9 +6,11 @@ from adafruit_blinka.microcontroller.generic_linux.libgpiod_pin import Pin
 
 from PIL import Image, ImageDraw, ImageFont
 
+from os.path import join
+
 
 class PCB8544(PCD8544):
-    def __init__(self, dc_pin: Pin, cs_pin: Pin, reset_pin: Pin, backlight_pin: Pin, contrast: int = 80, bias: int = 4, font: str = "DejaVuSansMono.ttf", font_size: int = 8, reverse_backlight: bool = False):
+    def __init__(self, dc_pin: Pin, cs_pin: Pin, reset_pin: Pin, backlight_pin: Pin, contrast: int = 80, bias: int = 4, font: str = "DejaVuSansMono.ttf", font_size: int = 8, reverse_backlight: bool = False, rotate: int = 0):
         # Initialize SPI bus and control pins
         spi = busio.SPI(board.SCK, MOSI=board.MOSI)
         dc = digitalio.DigitalInOut(dc_pin)                 # data/command
@@ -17,6 +19,7 @@ class PCB8544(PCD8544):
         self.__backlight = digitalio.DigitalInOut(backlight_pin)   # backlight
         self.__backlight.switch_to_output()
         self.__reverse_backlight = reverse_backlight
+        self.__rotate = rotate
 
         super().__init__(spi, dc, cs, reset, contrast=contrast, bias=bias)
 
@@ -30,11 +33,15 @@ class PCB8544(PCD8544):
         self.__backlight.value = not on if self.__reverse_backlight else on
 
     def SetTrueTypeFont(self, font: str, size: int) -> None:
-        self.__font = ImageFont.truetype(font, size)
+        try:
+            self.__font = ImageFont.truetype(font, size)
+        except OSError:
+            self.__font = ImageFont.truetype(join("/usr/local/share/fonts/rpimonitor",font), size)
 
     def ShowMultilineText(self, text: str, spacing: int = -1) -> None:
         if spacing < 0:
             spacing = self.__font.size // 2
+            spacing = 0
 
         self.fill(0)
         image = Image.new("1", (self.width, self.height))
@@ -46,6 +53,9 @@ class PCB8544(PCD8544):
             fill=255,
             spacing=spacing,
         )
+
+        if self.__rotate != 0:
+            image = image.rotate(self.__rotate)
 
         self.image(image)
 

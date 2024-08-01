@@ -43,8 +43,8 @@ class RPIInformer:
 
         self.Datetime = datetime.now()
 
-        print(vars(self.TempInfo), vars(self.CPUInfo), vars(self.MemInfo), vars(
-            self.DiskInfo), self.Datetime.isoformat(), vars(self.WiFiInfo))
+        """ print(vars(self.TempInfo), vars(self.CPUInfo), vars(self.MemInfo), vars(
+            self.DiskInfo), self.Datetime.isoformat(), vars(self.WiFiInfo)) """
 
         for rule in self.__rules:
             rule.Check(self)

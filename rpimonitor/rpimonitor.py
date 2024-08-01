@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 
-from dynaconf import Dynaconf, LazySettings
+from configparser import ConfigParser
 
 from rpi_informer import RPIInformer
 from pcd8544 import PCB8544
@@ -27,16 +27,17 @@ def main():
         conf["screen"]["font"],
         conf["screen"]["font_size"],
         conf["screen"]["reverse_backlight"],
+        conf["screen"]["rotate"],
     )
 
     display.SetBacklight(True)
 
     def print_rpi_info(informer: RPIInformer):
         template = (""
-                    + "({bitrate}){ssid}\n"
-                    + "CP: {cpu:>3} T: {temp:>3}°C\n"
-                    + "MEM: {mem_used:>4}/{mem_total:>4} MB\n"
-                    + "DISK:{disk_used:>4}/{disk_total:>4} GB\n"
+                    + "({bitrate:>3}){ssid}\n"
+                    + "CP:{cpu:>3}% T:{temp:>3}C\n"
+                    + "MEM:{mem_used:>4} /{mem_total:>4} MB\n"
+                    + "DISK:{disk_used:>3} /{disk_total:>4}  GB\n"
                     )
         msg = template.format(
             bitrate=int(informer.WiFiInfo.bit_rate),
@@ -69,8 +70,21 @@ def main():
         sleep(1)
 
 
-def get_config() -> LazySettings:
-    config = Dynaconf(settings_files=["/etc/rpimonitor.conf"])
+def get_config():
+    setting = ConfigParser()
+    setting.read("/usr/local/etc/rpimonitor.conf")
+
+    config = {}
+
+    for section in setting.sections():
+        items = setting.items(section)
+        section_dict = dict(items)
+
+        for key, value in section_dict.items():
+            if value.isdigit():
+                section_dict[key] = int(value) # type: ignore
+
+        config[section] = section_dict
 
     for pin_name, pin_value in config["pins"].items():
         try:

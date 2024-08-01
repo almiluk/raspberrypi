@@ -3,4 +3,3 @@ python3-rpi.gpio
 libgpiod-dev
 python3-libgpiod
 python3-pil
-python3-dynaconf
